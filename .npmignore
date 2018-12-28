@@ -2,6 +2,6 @@
 .travis.yml
 .istanbul.yml
 .idea/
-src/
-test/
+# src/
+# test/
 !lib/
