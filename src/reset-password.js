@@ -38,9 +38,12 @@ async function resetPassword (options, query, tokens, password) {
 
   if (tokens.resetToken) {
     let id = deconstructId(tokens.resetToken);
+    console.log('id',id)
     users = await usersService.get(id);
+    console.log('users long - ',users)
   } else if (tokens.resetShortToken) {
     users = await usersService.find({ query });
+    console.log('users short - ',query, users)
   } else {
     throw new errors.BadRequest('resetToken and resetShortToken are missing. (authLocalMgnt)',
       { errors: { $className: 'missingToken' } }

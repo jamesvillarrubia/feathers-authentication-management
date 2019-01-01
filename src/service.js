@@ -24,7 +24,9 @@ const optionsDefault = {
   resetDelay: 1000 * 60 * 60 * 2, // 2 hours
   delay: 1000 * 60 * 60 * 24 * 5, // 5 days
   identifyUserProps: ['email'],
-  sanitizeUserForClient
+  sanitizeUserForClient,
+  params: {}, // extra params to be sent along with the request
+
 };
 
 module.exports = authenticationLocalManagement;

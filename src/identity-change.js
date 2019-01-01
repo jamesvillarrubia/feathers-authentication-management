@@ -17,11 +17,16 @@ async function identityChange (options, identifyUser, password, changesIdentifyU
   debug('identityChange', password, changesIdentifyUser);
   const usersService = options.app.service(options.service);
   const usersServiceIdName = usersService.id;
+  const query = options.query ||  {}
+  const params = options.params || {}
 
   ensureObjPropsValid(identifyUser, options.identifyUserProps);
-  ensureObjPropsValid(changesIdentifyUser, options.identifyUserProps);
+  // THIS IS TO BE REMOVED - CHANGES NEED NOT BE DEPENDENT ON IDENTITY TO BE SECURED
+  // ensureObjPropsValid(changesIdentifyUser, options.identifyUserProps);
 
-  const users = await usersService.find({ query: identifyUser });
+  let find_params = Object.assign({},options.params,{query:Object.assign(query,identifyUser)})
+
+  const users = await usersService.find(find_params);
   const user1 = getUserData(users);
 
   try {
@@ -37,7 +42,7 @@ async function identityChange (options, identifyUser, password, changesIdentifyU
     verifyToken: await getLongToken(options.longTokenLen),
     verifyShortToken: await getShortToken(options.shortTokenLen, options.shortTokenDigits),
     verifyChanges: changesIdentifyUser
-  });
+  },params);
 
   const user3 = await notifier(options.notifier, 'identityChange', user2, null);
   return options.sanitizeUserForClient(user3);

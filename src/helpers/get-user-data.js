@@ -9,7 +9,8 @@ function getUserData (data, checks = []) {
       { errors: { $className: 'badParams' } });
   }
 
-  const users = Array.isArray(data) ? data : data.data || [ data ];
+  // SWAP OUT FOR LIMIT otherwise breaks for users with data field
+  const users = Array.isArray(data) ? data : (data.data && data.total && data.limit ? data.data : [ data ]);
   const user = users[0];
 
   if (users.length !== 1) {
