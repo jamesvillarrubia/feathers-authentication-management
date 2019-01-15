@@ -24,7 +24,7 @@ async function identityChange (options, identifyUser, password, changesIdentifyU
   // THIS IS TO BE REMOVED - CHANGES NEED NOT BE DEPENDENT ON IDENTITY TO BE SECURED
   // ensureObjPropsValid(changesIdentifyUser, options.identifyUserProps);
 
-  let find_params = Object.assign({},options.params,{query:Object.assign(query,identifyUser)})
+  let find_params = Object.assign({},options.params,{query:Object.assign(query, identifyUser)})
 
   const users = await usersService.find(find_params);
   const user1 = getUserData(users);
@@ -36,7 +36,7 @@ async function identityChange (options, identifyUser, password, changesIdentifyU
       { errors: { password: 'Password is incorrect.', $className: 'badParams' } }
     );
   }
-
+  
   const user2 = await usersService.patch(user1[usersServiceIdName], {
     verifyExpires: Date.now() + options.delay,
     verifyToken: await getLongToken(options.longTokenLen),

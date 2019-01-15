@@ -21,7 +21,9 @@ async function checkUnique (options, identifyUser, ownId, meta) {
   try {
     for (let i = 0, ilen = keys.length; i < ilen; i++) {
       const prop = keys[i];
-      const users = await usersService.find({...options.params, query: { [prop]: identifyUser[prop].trim() } });
+      const users = await usersService.find({...options.params, query: { [prop]: `${identifyUser[prop]}`.trim() } });
+      console.log(users)
+      console.log( { [prop]: `${identifyUser[prop]}`.trim() })
       const items = Array.isArray(users) ? users : users.data;
       const isNotUnique = items.length > 1 ||
         (items.length === 1 && items[0][usersServiceIdName] !== ownId);

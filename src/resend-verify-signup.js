@@ -19,15 +19,16 @@ module.exports = async function resendVerifySignup (options, identifyUser, notif
     options.identifyUserProps.concat('verifyToken', 'verifyShortToken')
   );
 
-  const users = await usersService.find({ query: identifyUser });
+  const users = await usersService.find({ ...options.params, query: identifyUser });
   const user1 = getUserData(users, ['isNotVerified']);
 
   const user2 = await usersService.patch(user1[usersServiceIdName], {
+    
     isVerified: false,
     verifyExpires: Date.now() + options.delay,
     verifyToken: await getLongToken(options.longTokenLen),
     verifyShortToken: await getShortToken(options.shortTokenLen, options.shortTokenDigits),
-  });
+  },{ ...options.params});
 
   const user3 = await notifier(options.notifier, 'resendVerifySignup', user2, notifierOptions);
   return options.sanitizeUserForClient(user3);

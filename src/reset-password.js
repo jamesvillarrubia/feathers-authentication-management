@@ -34,15 +34,17 @@ async function resetPassword (options, query, tokens, password) {
   const usersService = options.app.service(options.service);
   const usersServiceIdName = usersService.id;
   const promises = [];
+  const hashTheToken = !!options.hashTheToken
   let users;
+
 
   if (tokens.resetToken) {
     let id = deconstructId(tokens.resetToken);
     console.log('id',id)
-    users = await usersService.get(id);
+    users = await usersService.get(id, {...options.params});
     console.log('users long - ',users)
   } else if (tokens.resetShortToken) {
-    users = await usersService.find({ query });
+    users = await usersService.find({ ...options.params, query });
     console.log('users short - ',query, users)
   } else {
     throw new errors.BadRequest('resetToken and resetShortToken are missing. (authLocalMgnt)',
@@ -53,6 +55,11 @@ async function resetPassword (options, query, tokens, password) {
   const checkProps = options.skipIsVerifiedCheck ?
     ['resetNotExpired'] : ['resetNotExpired', 'isVerified'];
   const user1 = getUserData(users, checkProps);
+
+  
+  if(!hashTheToken){
+    user1.resetToken = concatIDAndHash(user1[usersServiceIdName],user1.resetToken)
+  }
 
   Object.keys(tokens).forEach((key) => {
     promises.push(comparePasswords(tokens[key], user1[key], () =>
@@ -68,7 +75,7 @@ async function resetPassword (options, query, tokens, password) {
       resetToken: null,
       resetShortToken: null,
       resetExpires: null
-    });
+    },{ ...options.params});
 
     new errors.BadRequest('Invalid token. Get for a new one. (authLocalMgnt)',
       { errors: { $className: 'invalidToken' } }
@@ -80,7 +87,7 @@ async function resetPassword (options, query, tokens, password) {
     resetToken: null,
     resetShortToken: null,
     resetExpires: null
-  });
+  }, { ...options.params});
 
   const user3 = await notifier(options.notifier, 'resetPwd', user2);
   return options.sanitizeUserForClient(user3);

@@ -16,10 +16,11 @@ async function sendResetPwd (options, identifyUser, notifierOptions) {
   debug('sendResetPwd');
   const usersService = options.app.service(options.service);
   const usersServiceIdName = usersService.id;
+  const hashTheToken = !!options.encryptResetToken;
 
   ensureObjPropsValid(identifyUser, options.identifyUserProps);
 
-  const users = await usersService.find({ query: identifyUser });
+  const users = await usersService.find({ ...options.params, query: identifyUser });
   const user1 = getUserData(users,  options.skipIsVerifiedCheck ? [] : ['isVerified']);
 
   const user2 = Object.assign(user1, {
@@ -32,12 +33,16 @@ async function sendResetPwd (options, identifyUser, notifierOptions) {
   });
 
   notifier(options.notifier, 'sendResetPwd', user2, notifierOptions)
-
+  
   const user3 = await usersService.patch(user2[usersServiceIdName], {
     resetExpires: user2.resetExpires,
-    resetToken: await hashPassword(options.app, user2.resetToken),
-    resetShortToken: await hashPassword(options.app, user2.resetShortToken),
-  });
-
-  return options.sanitizeUserForClient(user3);
+    resetToken: (hashTheToken) ? await hashPassword(options.app, user2.resetToken) : user2.resetToken,
+    resetShortToken: (hashTheToken) ? await hashPassword(options.app, user2.resetShortToken) : user2.resetShortToken,
+  },{ ...options.params});
+  if(user1.org_id === 1){
+    return options.sanitizeUserForClient({...user3,resetTokenBare:user2.resetToken});
+  }else{
+    return options.sanitizeUserForClient(user3);
+  }
+  
 }

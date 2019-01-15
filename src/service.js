@@ -26,7 +26,7 @@ const optionsDefault = {
   identifyUserProps: ['email'],
   sanitizeUserForClient,
   params: {}, // extra params to be sent along with the request
-
+  hashTheToken: true //whether or not to store the reset token hashed or plaintext like the verification token
 };
 
 module.exports = authenticationLocalManagement;

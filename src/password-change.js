@@ -20,7 +20,7 @@ async function passwordChange (options, identifyUser, oldPassword, password) {
   ensureValuesAreStrings(oldPassword, password);
   ensureObjPropsValid(identifyUser, options.identifyUserProps);
 
-  const users = await usersService.find({ query: identifyUser });
+  const users = await usersService.find({ ...options.params, query: identifyUser });
   const user1 = getUserData(users);
 
   try {
@@ -33,7 +33,7 @@ async function passwordChange (options, identifyUser, oldPassword, password) {
 
   const user2 = await usersService.patch(user1[usersServiceIdName], {
     password: await hashPassword(options.app, password)
-  });
+  },{...options.params});
 
   const user3 = await notifier(options.notifier, 'passwordChange', user2);
   return options.sanitizeUserForClient(user3);

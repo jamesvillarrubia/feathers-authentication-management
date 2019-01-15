@@ -14,6 +14,9 @@ module.exports = {
 };
 
 async function verifySignupWithLongToken(options, verifyToken) {
+  console.log(
+    'IN THE VERIFY SIGNUP LONG', options.params
+  )
   ensureValuesAreStrings(verifyToken);
 
   return await verifySignup(options, { verifyToken }, { verifyToken });
@@ -31,9 +34,8 @@ async function verifySignup (options, query, tokens) {
   const usersService = options.app.service(options.service);
   const usersServiceIdName = usersService.id;
 
-  const users = await usersService.find({ query });
+  const users = await usersService.find({ ...options.params, query });
   const user1 = getUserData(users, ['isNotVerifiedOrHasVerifyChanges', 'verifyNotExpired']);
-
   if (!Object.keys(tokens).every(key => tokens[key] === user1[key])) {
     await eraseVerifyProps(user1, user1.isVerified);
 
@@ -55,6 +57,6 @@ async function verifySignup (options, query, tokens) {
       verifyChanges: {}
     });
 
-    return await usersService.patch(user[usersServiceIdName], patchToUser, {});
+    return await usersService.patch(user[usersServiceIdName], patchToUser, { ...options.params});
   }
 }
