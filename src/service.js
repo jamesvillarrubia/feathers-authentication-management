@@ -16,7 +16,7 @@ const { verifySignupWithLongToken, verifySignupWithShortToken } = require('./ver
 const optionsDefault = {
   app: null, // value set during configuration
   service: '/users', // need exactly this for test suite
-  path: 'authManagement',
+  path: 'authanagement',
   notifier: async () => {},
   longTokenLen: 15, // token's length will be twice this
   shortTokenLen: 6,
@@ -33,7 +33,6 @@ module.exports = authenticationLocalManagement;
 
 function authenticationLocalManagement(options1 = {}) {
   debug('service being configured.');
-
   return function () {
     const options = Object.assign({}, optionsDefault, options1, { app: this });
     options.app.use(options.path, authLocalMgntMethods(options));
@@ -44,65 +43,58 @@ function authLocalMgntMethods(options) {
   return {
     async create (data) {
       debug(`create called. action=${data.action}`);
-
       switch (data.action) {
         case 'checkUnique':
           try {
-            return await checkUnique(options, data.value, data.ownId || null, data.meta || {});
+            return await checkUnique(options, data.value, data.ownId || null, data.meta || {}, data.options);
           } catch (err) {
             return Promise.reject(err); // support both async and Promise interfaces
           }
         case 'resendVerifySignup':
           try {
-            return await resendVerifySignup(options, data.value, data.notifierOptions);
+            return await resendVerifySignup(options, data.value, data.options);
           } catch (err) {
             return Promise.reject(err);
           }
         case 'verifySignupLong':
           try {
-            return await verifySignupWithLongToken(options, data.value);
+            return await verifySignupWithLongToken(options, data.value, data.options);
           } catch (err) {
             return Promise.reject(err);
           }
         case 'verifySignupShort':
           try {
-            return await verifySignupWithShortToken(options, data.value.token, data.value.user);
+            return await verifySignupWithShortToken(options, data.value.token, data.value.user, data.options);
           } catch (err) {
             return Promise.reject(err);
           }
         case 'sendResetPwd':
           try {
-            return await sendResetPwd(options, data.value, data.notifierOptions);
+            return await sendResetPwd(options, data.value, data.options);
           } catch (err) {
             return Promise.reject(err);
           }
         case 'resetPwdLong':
           try {
-            return await resetPwdWithLongToken(options, data.value.token, data.value.password);
+            return await resetPwdWithLongToken(options, data.value.token, data.value.password, data.options);
           } catch (err) {
             return Promise.reject(err);
           }
         case 'resetPwdShort':
           try {
-            return await resetPwdWithShortToken(
-              options, data.value.token, data.value.user, data.value.password
-            );
+            return await resetPwdWithShortToken(options, data.value.token, data.value.user, data.value.password, data.options);
           } catch (err) {
             return Promise.reject(err);
           }
         case 'passwordChange':
           try {
-            return await passwordChange(
-              options, data.value.user, data.value.oldPassword, data.value.password
-            );
+            return await passwordChange(options, data.value.user, data.value.oldPassword, data.value.password, data.options);
           } catch (err) {
             return Promise.reject(err);
           }
         case 'identityChange':
           try {
-            return await identityChange(
-              options, data.value.user, data.value.password, data.value.changes
-            );
+            return await identityChange(options, data.value.user, data.value.password, data.value.changes, data.options);
           } catch (err) {
             return Promise.reject(err);
           }

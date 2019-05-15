@@ -16,20 +16,20 @@ module.exports = {
   resetPwdWithShortToken,
 };
 
-async function resetPwdWithLongToken(options, resetToken, password) {
+async function resetPwdWithLongToken(options, resetToken, password, notifierOptions) {
   ensureValuesAreStrings(resetToken, password);
 
-  return await resetPassword(options, { resetToken }, { resetToken }, password);
+  return await resetPassword(options, { resetToken }, { resetToken }, password, notifierOptions);
 }
 
-async function resetPwdWithShortToken(options, resetShortToken, identifyUser, password) {
+async function resetPwdWithShortToken(options, resetShortToken, identifyUser, password, notifierOptions) {
   ensureValuesAreStrings(resetShortToken, password);
   ensureObjPropsValid(identifyUser, options.identifyUserProps);
 
-  return await resetPassword(options, identifyUser, { resetShortToken }, password);
+  return await resetPassword(options, identifyUser, { resetShortToken }, password, notifierOptions);
 }
 
-async function resetPassword (options, query, tokens, password) {
+async function resetPassword (options, query, tokens, password, notifierOptions) {
   debug('resetPassword', query, tokens, password);
   const usersService = options.app.service(options.service);
   const usersServiceIdName = usersService.id;
@@ -89,6 +89,6 @@ async function resetPassword (options, query, tokens, password) {
     resetExpires: null
   }, { ...options.params});
 
-  const user3 = await notifier(options.notifier, 'resetPwd', user2);
+  const user3 = await notifier(options.notifier, 'resetPwd', user2, notifierOptions)
   return options.sanitizeUserForClient(user3);
 }

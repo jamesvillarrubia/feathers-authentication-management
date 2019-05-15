@@ -12,7 +12,7 @@ const debug = makeDebug('authLocalMgnt:passwordChange');
 
 module.exports = passwordChange;
 
-async function passwordChange (options, identifyUser, oldPassword, password) {
+async function passwordChange (options, identifyUser, oldPassword, password, notifierOptions) {
   debug('passwordChange', oldPassword, password);
   const usersService = options.app.service(options.service);
   const usersServiceIdName = usersService.id;
@@ -35,6 +35,6 @@ async function passwordChange (options, identifyUser, oldPassword, password) {
     password: await hashPassword(options.app, password)
   },{...options.params});
 
-  const user3 = await notifier(options.notifier, 'passwordChange', user2);
+  const user3 = await notifier(options.notifier, 'passwordChange', user2, notifierOptions);
   return options.sanitizeUserForClient(user3);
 }

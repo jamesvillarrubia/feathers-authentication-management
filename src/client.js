@@ -8,56 +8,64 @@ function AuthManagement (app) { // eslint-disable-line no-unused-vars
 
   const authManagement = app.service('authManagement');
 
-  this.checkUnique = async (identifyUser, ownId, ifErrMsg) => await authManagement.create({
+  this.checkUnique = async (identifyUser, ownId, ifErrMsg, notifierOptions) => await authManagement.create({
     action: 'checkUnique',
     value: identifyUser,
     ownId,
-    meta: { noErrMsg: ifErrMsg }
+    meta: { noErrMsg: ifErrMsg },
+    options: notifierOptions
   }, {});
 
   this.resendVerifySignup = async (identifyUser, notifierOptions) => await authManagement.create({
     action: 'resendVerifySignup',
     value: identifyUser,
-    notifierOptions
+    notifierOptions,
+    options: notifierOptions
   }, {});
 
-  this.verifySignupLong = async (verifyToken) => await authManagement.create({
+  this.verifySignupLong = async (verifyToken, notifierOptions) => await authManagement.create({
     action: 'verifySignupLong',
-    value: verifyToken
+    value: verifyToken,
+    options: notifierOptions
   }, {});
 
-  this.verifySignupShort = async (verifyShortToken, identifyUser) => await authManagement.create({
+  this.verifySignupShort = async (verifyShortToken, identifyUser, notifierOptions) => await authManagement.create({
     action: 'verifySignupShort',
-    value: { user: identifyUser, token: verifyShortToken }
+    value: { user: identifyUser, token: verifyShortToken },
+    options: notifierOptions
   }, {});
 
   this.sendResetPwd = async (identifyUser, notifierOptions) => await authManagement.create({
     action: 'sendResetPwd',
     value: identifyUser,
-    notifierOptions
+    options: notifierOptions
   }, {});
 
-  this.resetPwdLong = async (resetToken, password) => await authManagement.create({
+  this.resetPwdLong = async (resetToken, password, notifierOptions) => await authManagement.create({
     action: 'resetPwdLong',
-    value: { token: resetToken, password }
+    value: { token: resetToken, password },
+    options: notifierOptions
   }, {});
 
-  this.resetPwdShort = async (resetShortToken, identifyUser, password) => await authManagement.create({
+  this.resetPwdShort = async (resetShortToken, identifyUser, password, notifierOptions) => await authManagement.create({
     action: 'resetPwdShort',
-    value: { user: identifyUser, token: resetShortToken, password }
+    value: { user: identifyUser, token: resetShortToken, password },
+    options: notifierOptions
   }, {});
 
-  this.passwordChange = async (oldPassword, password, identifyUser) => await authManagement.create({
+  this.passwordChange = async (oldPassword, password, identifyUser, notifierOptions) => await authManagement.create({
     action: 'passwordChange',
-    value: { user: identifyUser, oldPassword, password }
+    value: { user: identifyUser, oldPassword, password },
+    options: notifierOptions
   }, {});
 
-  this.identityChange = async (password, changesIdentifyUser, identifyUser) => await authManagement.create({
+  this.identityChange = async (password, changesIdentifyUser, identifyUser, notifierOptions) => await authManagement.create({
     action: 'identityChange',
-    value: { user: identifyUser, password, changes: changesIdentifyUser }
+    value: { user: identifyUser, password, changes: changesIdentifyUser },
+    options: notifierOptions
   }, {});
 
-  this.authenticate = async (email, password, cb) => {
+  this.authenticate = async (email, password, cb, notifierOptions) => {
     let cbCalled = false;
 
     return app.authenticate({ type: 'local', email, password })
