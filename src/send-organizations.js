@@ -62,9 +62,11 @@ async function sendOrganizations (options, identifyUser, notifierOptions) {
         return {key:keyObject[o.id], name:o.name}
     }
   }).filter(f=>!!f)
+  let user = {...users[0],key_options:returnable}
 
-//   console.log(returnable)
-  await notifier(options.notifier, 'sendOrganizations', returnable, notifierOptions);
+  
+  await notifier(options.notifier, 'sendOrganizations', user, notifierOptions);
+//   return options.sanitizeUserForClient(user)
   return {}
 
 }
