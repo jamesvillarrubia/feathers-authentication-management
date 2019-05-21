@@ -39,10 +39,5 @@ async function sendResetPwd (options, identifyUser, notifierOptions) {
     resetToken: (hashTheToken) ? await hashPassword(options.app, user2.resetToken) : user2.resetToken,
     resetShortToken: (hashTheToken) ? await hashPassword(options.app, user2.resetShortToken) : user2.resetShortToken,
   },{ ...options.params});
-  if(user1.org_id === 1){
-    return options.sanitizeUserForClient({...user3,resetTokenBare:user2.resetToken});
-  }else{
-    return options.sanitizeUserForClient(user3);
-  }
-  
+  return options.sanitizeUserForClient(user3);
 }
