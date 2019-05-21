@@ -7,6 +7,7 @@ const debug = makeDebug('authLocalMgnt:service');
 const checkUnique = require('./check-unique');
 const identityChange = require('./identity-change');
 const passwordChange = require('./password-change');
+const sendOrganizations = require('./send-organizations');
 const resendVerifySignup = require('./resend-verify-signup');
 const sanitizeUserForClient = require('./helpers/sanitize-user-for-client');
 const sendResetPwd = require('./send-reset-pwd');
@@ -65,6 +66,12 @@ function authLocalMgntMethods(options) {
         case 'verifySignupShort':
           try {
             return await verifySignupWithShortToken(options, data.value.token, data.value.user, data.options);
+          } catch (err) {
+            return Promise.reject(err);
+          }
+        case 'sendOrganizations':
+          try {
+            return await sendOrganizations(options, data.value, data.options);
           } catch (err) {
             return Promise.reject(err);
           }
