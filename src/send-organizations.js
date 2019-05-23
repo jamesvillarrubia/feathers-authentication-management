@@ -23,7 +23,7 @@ async function sendOrganizations (options, identifyUser, notifierOptions) {
   const data = await usersService.find({ ...options.params, query: identifyUser });
   const users = Array.isArray(data) ? data : (data.data && data.total && data.limit ? data.data : [ data ]);
   const org_ids = users.map(u=>{
-    if(u.isVerified){
+    if(options.skipIsVerifiedCheck || u.isVerified){
       return u.org_id
     }
   }).filter(u=>!!u)
