@@ -37,7 +37,6 @@ async function resetPassword (options, query, tokens, password, notifierOptions)
   const hashTheToken = !!options.hashTheToken
   let users;
 
-
   if (tokens.resetToken) {
     let id = deconstructId(tokens.resetToken);
     console.log('id',id)
@@ -83,10 +82,11 @@ async function resetPassword (options, query, tokens, password, notifierOptions)
   }
 
   const user2 = await usersService.patch(user1[usersServiceIdName], {
+    ...((notifierOptions || {}).user || {}),
     password: await hashPassword(options.app, password),
     resetToken: null,
     resetShortToken: null,
-    resetExpires: null
+    resetExpires: null,
   }, { ...options.params});
 
   const user3 = await notifier(options.notifier, 'resetPwd', user2, notifierOptions)
