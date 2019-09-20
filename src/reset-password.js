@@ -83,6 +83,7 @@ async function resetPassword (options, query, tokens, password, notifierOptions)
 
   const user2 = await usersService.patch(user1[usersServiceIdName], {
     ...((notifierOptions || {}).user || {}),
+    email: user1.email,
     password: await hashPassword(options.app, password),
     resetToken: null,
     resetShortToken: null,
