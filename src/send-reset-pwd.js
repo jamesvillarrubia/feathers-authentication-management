@@ -32,7 +32,7 @@ async function sendResetPwd (options, identifyUser, notifierOptions) {
     resetShortToken: await getShortToken(options.shortTokenLen, options.shortTokenDigits),
   });
 
-  notifier(options.notifier, 'sendResetPwd', user2, notifierOptions)
+  await notifier(options.notifier, 'sendResetPwd', user2, notifierOptions)
   
   const user3 = await usersService.patch(user2[usersServiceIdName], {
     resetExpires: user2.resetExpires,
